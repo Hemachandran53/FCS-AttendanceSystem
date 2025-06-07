@@ -1,0 +1,117 @@
+<!-- templates/admin.html -->
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - Attendance System{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-6">Admin Panel</h2>
+
+<!-- Update templates/admin.html - Replace the existing grid section with this -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <a href="{{ url_for('manage_teachers') }}" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+        <h3 class="text-lg font-bold mb-2">Manage Teachers</h3>
+        <p class="text-gray-600">Add, edit, or remove teachers</p>
+    </a>
+    
+    <a href="{{ url_for('manage_schedules') }}" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+        <h3 class="text-lg font-bold mb-2">Manage Schedules</h3>
+        <p class="text-gray-600">Set up teacher schedules</p>
+    </a>
+    
+    <a href="{{ url_for('manage_substitutions') }}" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+        <h3 class="text-lg font-bold mb-2">Manage Substitutions</h3>
+        <p class="text-gray-600">Add or view substitutions</p>
+    </a>
+    
+    <a href="{{ url_for('reports') }}" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+        <h3 class="text-lg font-bold mb-2">Reports</h3>
+        <p class="text-gray-600">View attendance and substitution reports</p>
+    </a>
+</div>
+
+<!-- Add this section after the attendance summary -->
+<div class="bg-white p-6 rounded-lg shadow-md mb-6">
+    <h3 class="text-xl font-bold mb-4">Quick Actions</h3>
+    <form method="POST" action="{{ url_for('admin_mark_absent') }}" class="flex items-end space-x-4">
+        <div class="flex-1">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="teacher_id">
+                Mark Teacher Absent
+            </label>
+            <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                    id="teacher_id" name="teacher_id" required>
+                <option value="">Select a teacher</option>
+                {% for teacher in teachers %}
+                <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="date">
+                Date (optional)
+            </label>
+            <input type="date" id="date" name="date" value="{{ today }}" 
+                   class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            Mark Absent & Assign Substitutes
+        </button>
+    </form>
+</div>
+
+<!-- Today's Attendance Summary -->
+<div class="bg-white p-6 rounded-lg shadow-md mb-6">
+    <h3 class="text-xl font-bold mb-4">Today's Attendance Summary ({{ today.strftime('%A, %B %d, %Y') }})</h3>
+    <table class="w-full">
+        <thead>
+            <tr class="border-b">
+                <th class="text-left py-2">Teacher</th>
+                <th class="text-left py-2">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for teacher in teachers %}
+            <tr class="border-b">
+                <td class="py-2">{{ teacher.name }}</td>
+                <td class="py-2">
+                    <span class="{% if attendance_dict[teacher.id] == 'absent' %}text-red-600{% else %}text-green-600{% endif %}">
+                        {{ attendance_dict[teacher.id]|capitalize }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Today's Substitutions -->
+{% if substitutions %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-bold mb-4">Today's Substitutions</h3>
+    <table class="w-full">
+        <thead>
+            <tr class="border-b">
+                <th class="text-left py-2">Period</th>
+                <th class="text-left py-2">Class</th>
+                <th class="text-left py-2">Original Teacher</th>
+                <th class="text-left py-2">Substitute</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sub in substitutions %}
+            <tr class="border-b">
+                <td class="py-2">{{ sub.schedule.period }}</td>
+                <td class="py-2">{{ sub.schedule.class_name }}</td>
+                <td class="py-2">{{ sub.original_teacher.name }}</td>
+                <td class="py-2">{{ sub.substitute.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-bold mb-4">Today's Substitutions</h3>
+    <p class="text-gray-600">No substitutions for today.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+<!-- templates/manage_teachers.html -->
+{% extends "base.html" %}
+
+{% block title %}Manage Teachers - Attendance System{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">Manage Teachers</h2>
+    <div class="space-x-2">
+        <a href="{{ url_for('admin_panel') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            Admin Panel
+        </a>
+        <a href="{{ url_for('add_teacher') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Add New Teacher
+        </a>
+    </div>
+</div>
+
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-bold mb-4">Teacher List</h3>
+    <table class="w-full">
+        <thead>
+            <tr class="border-b">
+                <th class="text-left py-2">ID</th>
+                <th class="text-left py-2">Username</th>
+                <th class="text-left py-2">Name</th>
+                <th class="text-left py-2">Role</th>
+                <th class="text-left py-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for teacher in teachers %}
+            <tr class="border-b">
+                                <td class="py-2">{{ teacher.id }}</td>
+                <td class="py-2">{{ teacher.username }}</td>
+                <td class="py-2">{{ teacher.name }}</td>
+                <td class="py-2">{{ teacher.role|capitalize }}</td>
+                <td class="py-2">
+                    <a href="{{ url_for('edit_teacher', id=teacher.id) }}" class="text-blue-600 hover:underline">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

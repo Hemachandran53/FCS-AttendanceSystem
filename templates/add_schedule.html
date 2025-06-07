@@ -1,0 +1,70 @@
+<!-- templates/add_schedule.html -->
+{% extends "base.html" %}
+
+{% block title %}Add Schedule - Attendance System{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <h2 class="text-2xl font-bold mb-6">Add New Schedule</h2>
+    
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <form method="POST">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="teacher_id">
+                    Teacher
+                </label>
+                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                        id="teacher_id" name="teacher_id" required>
+                    <option value="">Select a teacher</option>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="day">
+                    Day
+                </label>
+                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                        id="day" name="day" required>
+                    <option value="">Select a day</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                </select>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="period">
+                    Period
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                       id="period" name="period" type="number" min="1" max="8" required>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="class_name">
+                    Class Name
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                       id="class_name" name="class_name" type="text" required>
+            </div>
+            
+            <div class="flex items-center justify-between">
+                <a href="{{ url_for('manage_schedules') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    Cancel
+                </a>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
+                        type="submit">
+                    Add Schedule
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,133 @@
+<!-- Add this to templates/dashboard.html after the title section -->
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Attendance System{% endblock %}
+
+{% block content %}
+<!-- Add weekend notice if today is weekend -->
+{% if today.strftime('%A') in ['Saturday', 'Sunday'] %}
+<div class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded mb-4">
+    <p class="font-medium">🏖️ It's {{ today.strftime('%A') }}! Weekend classes may be scheduled.</p>
+</div>
+{% endif %}
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Rest of the dashboard content remains the same -->
+    <!-- Attendance Section -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-4">Today's Attendance ({{ today.strftime('%A, %B %d, %Y') }})</h2>
+        
+        {% if attendance %}
+            <p class="mb-4">Your status today: 
+                <span class="font-bold {% if attendance.status == 'present' %}text-green-600{% else %}text-red-600{% endif %}">
+                    {{ attendance.status|capitalize }}
+                </span>
+            </p>
+        {% else %}
+            <form method="POST" action="{{ url_for('mark_attendance') }}">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Mark your attendance:</label>
+                    <div class="space-y-2">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="status" value="present" required>
+                            <span class="ml-2">Present</span>
+                        </label>
+                        <br>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="status" value="absent" required>
+                            <span class="ml-2">Absent</span>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Submit Attendance
+                </button>
+            </form>
+        {% endif %}
+    </div>
+    
+    <!-- Today's Schedule -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-4">Today's Schedule</h2>
+        {% if schedule %}
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b">
+                        <th class="text-left py-2">Period</th>
+                        <th class="text-left py-2">Class</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in schedule %}
+                    <tr class="border-b">
+                        <td class="py-2">{{ s.period }}</td>
+                        <td class="py-2">{{ s.class_name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-gray-600">No classes scheduled for today.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Substitution Assignments -->
+<div class="mt-6">
+    {% if substitutions %}
+    <div class="bg-yellow-50 p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-4 text-yellow-800">📋 Substitution Assignments for Today</h2>
+        <p class="mb-4 text-gray-700">You have been assigned as a substitute for the following classes:</p>
+        <div class="space-y-3">
+            {% for sub in substitutions %}
+            <div class="bg-white p-4 rounded border border-yellow-200">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="font-semibold">Period {{ sub.schedule.period }}</p>
+                        <p class="text-lg">{{ sub.schedule.class_name }}</p>
+                        <p class="text-sm text-gray-600">Original Teacher: {{ sub.original_teacher.name }}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-full">
+                            Substitute
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Show if user is absent -->
+    {% if attendance and attendance.status == 'absent' %}
+    <div class="bg-red-50 p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-4 text-red-800">📌 Your Classes Today</h2>
+        <p class="mb-4 text-gray-700">You are marked absent. Substitutes have been assigned for your classes:</p>
+        {% set user_substitutions = current_user.substitutions_needed | selectattr('date', 'equalto', today) | list %}
+        {% if user_substitutions %}
+        <div class="space-y-3">
+            {% for sub in user_substitutions %}
+            <div class="bg-white p-4 rounded border border-red-200">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="font-semibold">Period {{ sub.schedule.period }}</p>
+                        <p class="text-lg">{{ sub.schedule.class_name }}</p>
+                        <p class="text-sm text-gray-600">Substitute: {{ sub.substitute.name }}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-3 py-1 text-sm bg-green-100 text-green-800 rounded-full">
+                            Covered
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-600">No substitutes assigned yet. Please contact admin.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

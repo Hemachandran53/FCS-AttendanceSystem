@@ -1,0 +1,79 @@
+<!-- templates/schedules.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Schedules - Attendance System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Manage Schedules</h1>
+            <div class="flex items-center space-x-4">
+                <a href="{{ url_for('admin_panel') }}" class="hover:underline">Admin Panel</a>
+                <a href="{{ url_for('dashboard') }}" class="hover:underline">Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="bg-blue-700 hover:bg-blue-800 px-3 py-1 rounded">Logout</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mx-auto p-6">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">Schedule List</h2>
+            <a href="{{ url_for('add_schedule') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Add New Schedule
+            </a>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <table class="min-w-full">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-3 px-6 text-left">ID</th>
+                        <th class="py-3 px-6 text-left">Teacher</th>
+                        <th class="py-3 px-6 text-left">Day</th>
+                        <th class="py-3 px-6 text-left">Period</th>
+                        <th class="py-3 px-6 text-left">Class</th>
+                        <th class="py-3 px-6 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for schedule in schedules %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-3 px-6">{{ schedule.id }}</td>
+                            <td class="py-3 px-6">{{ schedule.teacher.name }}</td>
+                            <td class="py-3 px-6">
+                                {% if schedule.day == 0 %}Monday
+                                {% elif schedule.day == 1 %}Tuesday
+                                {% elif schedule.day == 2 %}Wednesday
+                                {% elif schedule.day == 3 %}Thursday
+                                {% elif schedule.day == 4 %}Friday
+                                {% elif schedule.day == 5 %}Saturday
+                                {% elif schedule.day == 6 %}Sunday
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-6">{{ schedule.period }}</td>
+                            <td class="py-3 px-6">{{ schedule.class_name }}</td>
+                            <td class="py-3 px-6">
+                                <a href="#" class="text-blue-600 hover:underline mr-2">Edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

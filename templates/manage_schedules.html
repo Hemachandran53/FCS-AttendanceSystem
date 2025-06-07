@@ -1,0 +1,61 @@
+<!-- templates/manage_schedules.html -->
+{% extends "base.html" %}
+
+{% block title %}Manage Schedules - Attendance System{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">Manage Schedules</h2>
+    <div class="space-x-2">
+        <a href="{{ url_for('admin_panel') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            Admin Panel
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            Dashboard
+        </a>
+        <a href="{{ url_for('add_schedule') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Add New Schedule
+        </a>
+    </div>
+</div>
+
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-bold mb-4">Schedule List</h3>
+    <div class="mb-4">
+        <span class="text-sm text-gray-600">
+            <span class="inline-block w-4 h-4 bg-blue-50 mr-1"></span> Weekend Classes
+        </span>
+    </div>
+    <table class="w-full">
+        <thead>
+            <tr class="border-b">
+                <th class="text-left py-2">ID</th>
+                <th class="text-left py-2">Teacher</th>
+                <th class="text-left py-2">Day</th>
+                <th class="text-left py-2">Period</th>
+                <th class="text-left py-2">Class</th>
+                <th class="text-left py-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in schedules %}
+            <tr class="border-b {% if schedule.day in ['Saturday', 'Sunday'] %}bg-blue-50{% endif %}">
+                <td class="py-2">{{ schedule.id }}</td>
+                <td class="py-2">{{ schedule.teacher.name }}</td>
+                <td class="py-2">
+                    {{ schedule.day }}
+                    {% if schedule.day in ['Saturday', 'Sunday'] %}
+                    <span class="text-xs text-blue-600">(Weekend)</span>
+                    {% endif %}
+                </td>
+                <td class="py-2">{{ schedule.period }}</td>
+                <td class="py-2">{{ schedule.class_name }}</td>
+                <td class="py-2">
+                    <a href="{{ url_for('edit_schedule', id=schedule.id) }}" class="text-blue-600 hover:underline">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

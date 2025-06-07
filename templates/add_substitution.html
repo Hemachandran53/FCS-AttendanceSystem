@@ -1,0 +1,67 @@
+<!-- templates/add_substitution.html -->
+{% extends "base.html" %}
+
+{% block title %}Add Substitution - Attendance System{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <h2 class="text-2xl font-bold mb-6">Add Manual Substitution</h2>
+    
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <form method="POST">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="date">
+                    Date
+                </label>
+                <input type="date" id="date" name="date" required
+                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="schedule_id">
+                    Select Class
+                </label>
+                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                        id="schedule_id" name="schedule_id" required>
+                    <option value="">Select a class</option>
+                    {% for schedule in schedules %}
+                    <option value="{{ schedule.id }}">
+                        {{ schedule.teacher.name }} - {{ schedule.day }} Period {{ schedule.period }} - {{ schedule.class_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="substitute_teacher_id">
+                    Substitute Teacher
+                </label>
+                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                        id="substitute_teacher_id" name="substitute_teacher_id" required>
+                    <option value="">Select substitute teacher</option>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-4 p-4 bg-yellow-50 rounded">
+                <p class="text-sm text-gray-700">
+                    <strong>Note:</strong> This will create a manual substitution assignment. 
+                    Make sure the substitute teacher is available during the selected period.
+                </p>
+            </div>
+            
+            <div class="flex items-center justify-between">
+                <a href="{{ url_for('manage_substitutions') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    Cancel
+                </a>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
+                        type="submit">
+                    Add Substitution
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
