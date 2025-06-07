@@ -521,7 +521,12 @@ def init_db():
         
         db.session.commit()
 
-app = app        
+if __name__ == '__main__':
+    with app.app_context():
+        init_db()
+    # For Render deployment
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)       
 
 # if __name__ == '__main__':
 #     with app.app_context():
